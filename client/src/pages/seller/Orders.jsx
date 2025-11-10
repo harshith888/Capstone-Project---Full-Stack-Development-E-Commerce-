@@ -6,6 +6,7 @@ import toast from 'react-hot-toast'
 const Orders = () => {
     const {currency, axios} = useAppContext()
     const [orders, setOrders] = useState([])
+    const allowedStatuses = ['Order Placed','Accepted','Out For Delivery','Delivered','Returned']
 
     const fetchOrders = async () =>{
         try {
@@ -19,6 +20,20 @@ const Orders = () => {
             toast.error(error.message)
         }
     };
+
+    const updateStatus = async (orderId, status)=>{
+        try {
+            const { data } = await axios.patch(`/api/order/seller/${orderId}/status`, { status })
+            if(data.success){
+                toast.success('Status updated')
+                fetchOrders();
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
 
 
     useEffect(()=>{
@@ -64,6 +79,14 @@ const Orders = () => {
                         <p>Method: {order.paymentType}</p>
                         <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
                         <p>Payment: {order.isPaid ? "Paid" : "Pending"}</p>
+                        <div className='mt-2'>
+                            <label className='text-sm mr-2'>Status:</label>
+                            <select className='border px-2 py-1 rounded' value={order.status} onChange={(e)=> updateStatus(order.id || order._id, e.target.value)}>
+                                {allowedStatuses.map((s)=> (
+                                    <option key={s} value={s}>{s}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
             ))}

@@ -160,7 +160,7 @@ export const footerLinks = [
     title: "Need help?",
     links: [
       { text: "Delivery Information", url: "#" },
-      { text: "Return & Refund Policy", url: "#" },
+      { text: "Return & Refund Policy", url: "/return-policy" },
       { text: "Payment Methods", url: "#" },
       { text: "Track your Order", url: "#" },
       { text: "Contact Us", url: "#" },

@@ -211,3 +211,32 @@ export const getAllOrders = async (req, res)=>{
         res.json({ success: false, message: error.message });
     }
 }
+
+// Update Order Status (seller only)
+export const updateOrderStatus = async (req, res) =>{
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        if(!id) return res.json({ success: false, message: 'Order id missing' });
+
+        // Define allowed statuses - keep human readable to match existing defaults
+        const allowedStatuses = [
+            'Order Placed',
+            'Accepted',
+            'Out For Delivery',
+            'Delivered',
+            'Returned'
+        ];
+
+        if(!status || !allowedStatuses.includes(status)){
+            return res.json({ success: false, message: 'Invalid status value' });
+        }
+
+        const order = await prisma.order.update({ where: { id }, data: { status } });
+
+        return res.json({ success: true, message: 'Order status updated', order });
+    } catch (error) {
+        return res.json({ success: false, message: error.message });
+    }
+}
